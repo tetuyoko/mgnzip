@@ -1,20 +1,36 @@
 package mgnzip
 
 import (
-	"archive/zip"
-	"github.com/tetuyoko/mgnstr"
 	"io"
 	"os"
 	"path/filepath"
+	"archive/zip"
+
+	"github.com/tetuyoko/mgnstr"
 )
 
 var Excludes = []string{"__MACOSX", ".DS_Store"}
 
+// check if directory or not from name
+func IsDirectory(name string) (isDir bool, err error) {
+	fInfo, err := os.Stat(name)
+	if err != nil {
+		return false, err
+	}
+
+	return fInfo.IsDir(), nil
+}
+
+// unzip
 // src : source zip
-// dest : outputs path
+// destdir : outputs path(directory)
 // paths: outputed all paths
 // err: error
-func Unzip(src, dest string) (paths []string, err error) {
+func Unzip(src, destdir string) (paths []string, err error) {
+	if error := os.MkdirAll(destdir, 0774); error != nil {
+		return nil, error
+	}
+
 	r, err := zip.OpenReader(src)
 	if err != nil {
 		return nil, err
@@ -34,7 +50,7 @@ func Unzip(src, dest string) (paths []string, err error) {
 		}
 		defer rc.Close()
 
-		path := filepath.Join(dest, f.Name)
+		path := filepath.Join(destdir, f.Name)
 
 		if f.FileInfo().IsDir() {
 			os.MkdirAll(path, f.Mode())
