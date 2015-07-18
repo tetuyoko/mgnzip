@@ -1,10 +1,10 @@
 package mgnzip
 
 import (
-    "testing"
-    "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestUnzip(t *testing.T) {
-    assert.True(t,  true)
+	assert.True(t, false)
 }
