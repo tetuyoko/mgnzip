@@ -33,6 +33,16 @@ func (suite *ZipTestSuite) TestUnzip() {
 	suite.Equal(paths, []string{suite.OutputDir + "/test.txt", suite.OutputDir + "/gophercolor16x16.png"})
 }
 
+func (suite *ZipTestSuite) TestUnzipWithMetafile() {
+	paths, err := Unzip("testdata/withmetafile.zip", suite.OutputDir)
+	suite.Nil(err)
+	suite.Equal(paths,
+	[]string{
+		suite.OutputDir + "/withmetafile/hoges/READ",
+		suite.OutputDir + "/withmetafile/README",
+	})
+}
+
 func (suite *ZipTestSuite) TestIsDirectory() {
 	isdir, err := IsDirectory("testdata")
 	suite.Nil(err)

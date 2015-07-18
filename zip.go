@@ -37,13 +37,13 @@ func Unzip(src, destdir string) (paths []string, err error) {
 	}
 	defer r.Close()
 
-	//var paths []string
-	paths = make([]string, len(r.File))
+	paths  = make([]string, 0)
 
-	for i, f := range r.File {
+	for _, f := range r.File {
 		if mgnstr.ContainsAny(f.Name, Excludes) {
 			continue
 		}
+
 		rc, err := f.Open()
 		if err != nil {
 			return nil, err
@@ -55,7 +55,7 @@ func Unzip(src, destdir string) (paths []string, err error) {
 		if f.FileInfo().IsDir() {
 			os.MkdirAll(path, f.Mode())
 		} else {
-			paths[i] = path
+			paths = append(paths, path)
 
 			f, err := os.OpenFile(
 				path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
