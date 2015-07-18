@@ -1,10 +1,10 @@
 package mgnzip
 
 import (
+	"archive/zip"
 	"io"
 	"os"
 	"path/filepath"
-	"archive/zip"
 
 	"github.com/tetuyoko/mgnstr"
 )
