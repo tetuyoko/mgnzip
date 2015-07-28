@@ -1,9 +1,11 @@
 package mgnzip
 
 import (
-	"archive/zip"
 	"io"
 	"os"
+	"path"
+
+	"archive/zip"
 	"path/filepath"
 
 	"github.com/tetuyoko/mgnstr"
@@ -27,8 +29,8 @@ func IsDirectory(name string) (isDir bool, err error) {
 // paths: outputed all paths
 // err: error
 func Unzip(src, destdir string) (paths []string, err error) {
-	if error := os.MkdirAll(destdir, 0774); error != nil {
-		return nil, error
+	if err = os.MkdirAll(destdir, 0774); err != nil {
+		return nil, err
 	}
 
 	r, err := zip.OpenReader(src)
@@ -37,7 +39,7 @@ func Unzip(src, destdir string) (paths []string, err error) {
 	}
 	defer r.Close()
 
-	paths  = make([]string, 0)
+	paths = make([]string, 0)
 
 	for _, f := range r.File {
 		if mgnstr.ContainsAny(f.Name, Excludes) {
@@ -50,21 +52,24 @@ func Unzip(src, destdir string) (paths []string, err error) {
 		}
 		defer rc.Close()
 
-		path := filepath.Join(destdir, f.Name)
+		// dir無しでくるときがあるのでつくってしまう
+		tpath := filepath.Join(destdir, f.Name)
+		os.MkdirAll(path.Dir(tpath), 0777)
 
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(path, f.Mode())
+			os.MkdirAll(tpath, f.Mode())
 		} else {
-			paths = append(paths, path)
+			paths = append(paths, tpath)
 
-			f, err := os.OpenFile(
-				path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			fo, err := os.OpenFile(
+				tpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+
 			if err != nil {
 				return nil, err
 			}
-			defer f.Close()
+			defer fo.Close()
 
-			if _, err = io.Copy(f, rc); err != nil {
+			if _, err = io.Copy(fo, rc); err != nil {
 				return nil, err
 			}
 		}
