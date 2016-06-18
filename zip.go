@@ -11,9 +11,10 @@ import (
 	"github.com/tetuyoko/mgnstr"
 )
 
+// Excludes unused file
 var Excludes = []string{"__MACOSX", ".DS_Store"}
 
-// check if directory or not from name
+// IsDirectory is check if directory or not from name
 func IsDirectory(name string) (isDir bool, err error) {
 	fInfo, err := os.Stat(name)
 	if err != nil {
@@ -23,7 +24,7 @@ func IsDirectory(name string) (isDir bool, err error) {
 	return fInfo.IsDir(), nil
 }
 
-// unzip
+// Unzip is unzip
 // src : source zip
 // destdir : outputs path(directory)
 // paths: outputed all paths
