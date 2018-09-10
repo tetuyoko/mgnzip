@@ -1,4 +1,0 @@
-package: github.com/tetuyoko/mgnzip
-import:
-  - package: github.com/tetuyoko/mgnstr
-  - package: github.com/stretchr/testify
